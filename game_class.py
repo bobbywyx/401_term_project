@@ -42,11 +42,24 @@ class GambleGame:
         self.current_money = money_after_bet
         return round_result
 
-    def play(self):
-        print("Game start!")
+    def play(self, debug_info=False):
+        if debug_info:
+            print("Game start!")
         while not self.ending_condition_function(self.history_data, self.info):
             round_result = self.play_one_round()
-            print("== round %d ==" % len(self.history_data))
-            print("Round result: ", round_result)
-            print("Current money: ", self.current_money)
-        print("Game end!")
+            if debug_info:
+                print("== round %d ==" % len(self.history_data))
+                print("Round result: ", round_result)
+                print("Current money: ", self.current_money)
+        if debug_info:
+            print("Game end!")
+        return self.history_data
+
+    def clear(self):
+        self.current_money = self.initial_money
+        self.history_data = []
+
+    def replay(self, debug_info=False):
+        self.clear()
+        self.play(debug_info)
+        return self.history_data

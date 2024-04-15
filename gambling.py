@@ -5,20 +5,20 @@ import matplotlib.pyplot as plt
 
 from game_class import GambleGame
 
+# Parameters
+
 # Initial Bankroll
 bankroll = 100
-bankroll_list = [bankroll]
 
 # Probability
-p = 0.6
+p = 0.3
 q = 1 - p
 
 # Increase factor
-b = 1
+b = 2
 
 #  Number of rounds to play
-num_rounds = 0
-num_list = [num_rounds]
+num_rounds = 100
 
 info = {
     "id": 0,
@@ -28,6 +28,7 @@ info = {
 }
 
 
+# Gamble
 def gamble_function(money_in_bet, info):
     if random.random() < info["p"]:
         return (1 + info["b"]) * money_in_bet
@@ -40,44 +41,30 @@ def decision_function(history_data, info):
 
 
 def ending_condition_function(history_data, info):
-    return len(history_data) > 100 or (len(history_data)!=0 and history_data[-1][3] <= 0)
+    return len(history_data) > num_rounds or (len(history_data) != 0 and history_data[-1][3] <= 0)
 
 
 game = GambleGame(bankroll, decision_function, gamble_function, ending_condition_function, info)
 
-game.play()
+
+bankroll_history_of_different_games = []
+
+for i in range(20):
+    game.replay()
+
+    bankroll_list = [x[0] for x in game.history_data]
+    num_list = [x for x in range(len(bankroll_list))]
+
+    if len(bankroll_list) < num_rounds:
+        bankroll_list += [bankroll_list[-1]] * (num_rounds - len(bankroll_list))
+    bankroll_history_of_different_games.append(bankroll_list)
 
 
-# while num_rounds <= 100 and bankroll > 0:
-#     # Kelly's criterion
-#     proportion = p + (p - 1) / b
-#     # Bet size
-#     Y0 = proportion * bankroll
-#
-#     if random.random() < p:  # Win
-#         Y1 = (1 + b) * Y0
-#     else:  # Lose
-#         Y1 = 0
-#
-#     bankroll = bankroll - Y0 + Y1
-#     num_rounds += 1
-#     num_list.append(num_rounds)
-#     bankroll_list.append(bankroll)
-#
-# plt.title("Simulation of Kelly Criterion")
+x = [x for x in range(len(bankroll_history_of_different_games[-1]))]
 
-# get the data from the game object, get the first element of the tuple
-bankroll_list = [x[0] for x in game.history_data]
-num_list = [x for x in range(len(bankroll_list))]
+fig, ax = plt.subplots()
 
+for i in range(len(bankroll_history_of_different_games)):
+    ax.plot(x, numpy.log10(bankroll_history_of_different_games[i]), label='Data ' + str(i))
 
-plt.subplot(1, 2, 1)
-plt.plot(num_list, bankroll_list)
-plt.xlabel("n")
-plt.ylabel("Bankroll")
-
-plt.subplot(1, 2, 2)
-plt.plot(num_list, numpy.log10(bankroll_list))
-plt.xlabel("n")
-plt.ylabel("Bankroll (log scale)")
-plt.savefig("figure.png")
+plt.savefig("figure2.png")

@@ -73,4 +73,11 @@ for i in range(len(bankroll_history_of_different_games)):
     ax.plot(x, numpy.log10(bankroll_history_of_different_games[i]), label='Data ' + str(i))
     # ax.plot(x, (bankroll_history_of_different_games[i]), label='Data ' + str(i))
 
+# get the average of the bankroll history
+
+average_bankroll = numpy.mean(bankroll_history_of_different_games, axis=0)
+# print(average_bankroll)
+
+ax.plot(x, numpy.log10(average_bankroll), label='Average', color='red', linewidth=2)
+
 plt.savefig("figure2.png")

@@ -43,6 +43,7 @@ class GambleGame:
         return round_result
 
     def play(self, debug_info=False):
+        self.info["id"] += 1
         if debug_info:
             print("Game start!")
         while not self.ending_condition_function(self.history_data, self.info):

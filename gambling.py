@@ -20,12 +20,18 @@ b = 1
 #  Number of rounds to play
 num_rounds = 100
 
+num_experiment = 5000
+
 info = {
     "id": 0,
     "p": p,
     "q": q,
     "b": b,
 }
+
+print("game info:", info)
+print("num_rounds:", num_rounds)
+print("num_experiment:", num_experiment)
 
 
 # Gamble
@@ -37,8 +43,9 @@ def gamble_function(money_in_bet, info):
 
 
 def decision_function(history_data, info):
-    # return 0.5
+    # return 0.3
     return info["p"] + (info["p"] - 1) / info["b"]
+    # return (info["p"]*info["b"] + info["p"] -1) / (info["p"] * info["b"] * info["b"] + 1 - info["p"])
 
 
 def ending_condition_function(history_data, info):
@@ -49,7 +56,7 @@ game = GambleGame(bankroll, decision_function, gamble_function, ending_condition
 
 bankroll_history_of_different_games = []
 
-for i in range(50):
+for i in range(num_experiment):
     game.replay()
 
     bankroll_list = [x[0] for x in game.history_data] + [game.history_data[-1][3]]
@@ -81,3 +88,19 @@ average_bankroll = numpy.mean(bankroll_history_of_different_games, axis=0)
 ax.plot(x, numpy.log10(average_bankroll), label='Average', color='red', linewidth=2)
 
 plt.savefig("figure2.png")
+
+# calculate the wanted E[log(X+1)]
+pi = info["p"] + (info["p"] - 1) / info["b"]
+print("pi:", pi)
+
+E = p * numpy.log(1 + pi * b) + q * numpy.log(1 - pi)
+gr = numpy.exp(E) - 1
+
+print("E:", E)
+print("growth rate", gr)
+print("expected value:", 100 * ((gr + 1) ** num_rounds))
+
+print("actual value:", average_bankroll[-1])
+
+actual_growth_rate = (average_bankroll[-1] / bankroll) ** (1 / num_rounds) - 1
+print("actual growth rate:", actual_growth_rate)

@@ -43,7 +43,7 @@ def gamble_function(money_in_bet, info):
 
 
 def decision_function(history_data, info):
-    # return 0.3
+    # return 0.1
     return info["p"] + (info["p"] - 1) / info["b"]
     # return (info["p"]*info["b"] + info["p"] -1) / (info["p"] * info["b"] * info["b"] + 1 - info["p"])
 
@@ -111,16 +111,29 @@ fig, ax = plt.subplots()
 
 # for i in range(len(bankroll_history_of_different_games)):
 for i in range(20):
-    ax.plot(x, bankroll_history_of_different_games[i], alpha=0.5)
+    ax.plot(x, bankroll_history_of_different_games[i], alpha=0.3)
     # ax.plot(x, (bankroll_history_of_different_games[i]), label='Data ' + str(i))
 
 # get the average of the bankroll history
 
 # print(average_bankroll)
-ax.plot(x, average_bankroll, label='Average', color='red', linewidth=2)
+ax.plot(x, average_bankroll, label='Average', color='red', linestyle='--', linewidth=2)
 
 # draw the median line
-ax.plot(x, bankroll_history_of_different_games[median_index], color='blue', linestyle='--', label='Median',
+ax.plot(x, bankroll_history_of_different_games[median_index], color='blue', label='Median',
+        linewidth=2)
+
+# q1,q3
+q1, q3 = numpy.percentile(final_bankroll, 25), numpy.percentile(final_bankroll, 75)
+q1_index, q3_index = final_bankroll.index(q1), final_bankroll.index(q3)
+print("q1:", q1)
+print("q1 index:", q1_index)
+print("q3:", q3)
+print("q3 index:", q3_index)
+
+ax.plot(x, bankroll_history_of_different_games[q1_index], color='green', label='Q1',
+        linewidth=2)
+ax.plot(x, bankroll_history_of_different_games[q3_index], color='orange', label='Q3',
         linewidth=2)
 
 # y label
@@ -135,5 +148,11 @@ ax.set_yscale('log')
 ax.legend()
 
 ax.grid(True)
+
+# set the picture size
+fig.set_size_inches(10, 5)
+
+# set the title
+plt.title("p = %.1f, b = %.1f, $\pi$ = %.1f" % (p, b, pi))
 
 plt.savefig("figure2.png")

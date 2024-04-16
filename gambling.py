@@ -67,6 +67,8 @@ for i in range(num_experiment):
 
     # print(bankroll_list)
     # print(len(bankroll_list))
+    if game.info["id"] == 1:
+        print("history of one game", game.history_data)
 
     bankroll_history_of_different_games.append(bankroll_list)
 
@@ -90,6 +92,8 @@ ax.plot(x, numpy.log10(average_bankroll), label='Average', color='red', linewidt
 plt.savefig("figure2.png")
 
 # calculate the wanted E[log(X+1)]
+
+print("\n============\ncalculation & theoretical result:")
 pi = info["p"] + (info["p"] - 1) / info["b"]
 print("pi:", pi)
 
@@ -98,9 +102,19 @@ gr = numpy.exp(E) - 1
 
 print("E:", E)
 print("growth rate", gr)
-print("expected value:", 100 * ((gr + 1) ** num_rounds))
+print("expected value:", bankroll * ((gr + 1) ** num_rounds))
 
-print("actual value:", average_bankroll[-1])
+print("\n============\nexperiment result:")
+
+print("actual mean value:", average_bankroll[-1])
 
 actual_growth_rate = (average_bankroll[-1] / bankroll) ** (1 / num_rounds) - 1
-print("actual growth rate:", actual_growth_rate)
+print("actual mean growth rate:", actual_growth_rate)
+
+# get the median of the results
+final_bankroll = [x[-1] for x in bankroll_history_of_different_games]
+
+median_bankroll = numpy.median(final_bankroll)
+print("median bankroll:",median_bankroll)
+median_growth_rate = (median_bankroll / bankroll) ** (1 / num_rounds) - 1
+print("median growth rate:", median_growth_rate)

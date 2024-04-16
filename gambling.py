@@ -8,7 +8,7 @@ from game_class import GambleGame
 # Parameters
 
 # Initial Bankroll
-bankroll = 100
+bankroll = 1
 
 # Probability
 p = 0.6
@@ -20,7 +20,7 @@ b = 1
 #  Number of rounds to play
 num_rounds = 100
 
-num_experiment = 5000
+num_experiment = 501
 
 info = {
     "id": 0,
@@ -72,25 +72,6 @@ for i in range(num_experiment):
 
     bankroll_history_of_different_games.append(bankroll_list)
 
-# plot
-
-x = [x for x in range(len(bankroll_history_of_different_games[-1]))]
-
-fig, ax = plt.subplots()
-
-for i in range(len(bankroll_history_of_different_games)):
-    ax.plot(x, numpy.log10(bankroll_history_of_different_games[i]), label='Data ' + str(i))
-    # ax.plot(x, (bankroll_history_of_different_games[i]), label='Data ' + str(i))
-
-# get the average of the bankroll history
-
-average_bankroll = numpy.mean(bankroll_history_of_different_games, axis=0)
-# print(average_bankroll)
-
-ax.plot(x, numpy.log10(average_bankroll), label='Average', color='red', linewidth=2)
-
-plt.savefig("figure2.png")
-
 # calculate the wanted E[log(X+1)]
 
 print("\n============\ncalculation & theoretical result:")
@@ -106,15 +87,53 @@ print("expected value:", bankroll * ((gr + 1) ** num_rounds))
 
 print("\n============\nexperiment result:")
 
+average_bankroll = numpy.mean(bankroll_history_of_different_games, axis=0)
 print("actual mean value:", average_bankroll[-1])
 
 actual_growth_rate = (average_bankroll[-1] / bankroll) ** (1 / num_rounds) - 1
 print("actual mean growth rate:", actual_growth_rate)
 
-# get the median of the results
+# get the median of the results and the index of the median
 final_bankroll = [x[-1] for x in bankroll_history_of_different_games]
-
 median_bankroll = numpy.median(final_bankroll)
-print("median bankroll:",median_bankroll)
+print("median bankroll:", median_bankroll)
 median_growth_rate = (median_bankroll / bankroll) ** (1 / num_rounds) - 1
 print("median growth rate:", median_growth_rate)
+
+median_index = final_bankroll.index(median_bankroll)
+print("median index:", median_index)
+
+# plot
+
+x = [x for x in range(len(bankroll_history_of_different_games[-1]))]
+
+fig, ax = plt.subplots()
+
+# for i in range(len(bankroll_history_of_different_games)):
+for i in range(20):
+    ax.plot(x, bankroll_history_of_different_games[i], alpha=0.5)
+    # ax.plot(x, (bankroll_history_of_different_games[i]), label='Data ' + str(i))
+
+# get the average of the bankroll history
+
+# print(average_bankroll)
+ax.plot(x, average_bankroll, label='Average', color='red', linewidth=2)
+
+# draw the median line
+ax.plot(x, bankroll_history_of_different_games[median_index], color='blue', linestyle='--', label='Median',
+        linewidth=2)
+
+# y label
+ax.set_ylabel('log10(bankroll)')
+
+# y axis label
+ax.set_xlabel('rounds')
+ax.set_ylabel('log10(bankroll)')
+
+ax.set_yscale('log')
+
+ax.legend()
+
+ax.grid(True)
+
+plt.savefig("figure2.png")

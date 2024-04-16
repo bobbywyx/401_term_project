@@ -35,6 +35,7 @@ class GambleGame:
 
     def play_one_round(self):
         proportion = self.decision_function(self.history_data, self.info)
+        proportion = max(0, min(1, proportion))
         money_in_bet = proportion * self.current_money
         round_result = self.gamble_function(money_in_bet, self.info)
         money_after_bet = self.current_money - money_in_bet + round_result

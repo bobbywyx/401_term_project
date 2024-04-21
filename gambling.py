@@ -3,7 +3,7 @@ import numpy
 import math
 import matplotlib.pyplot as plt
 
-import gamble_with_uncertantiy as rule
+import investment as rule
 from game_class import GambleGame
 
 num_experiment = 501
